@@ -1,0 +1,56 @@
+@import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Manrope:wght@400;500;600;700&display=swap');
+@import "tailwindcss";
+
+@theme {
+  --font-headline: "Plus Jakarta Sans", "Inter", sans-serif;
+  --font-body: "Manrope", sans-serif;
+  
+  --color-primary: #006b0a;
+  --color-on-primary: #d2ffc4;
+  --color-primary-container: #59ee50;
+  --color-on-primary-container: #005406;
+  
+  --color-secondary: #006a33;
+  --color-on-secondary: #cdffd3;
+  --color-secondary-container: #86f3a1;
+  --color-on-secondary-container: #005b2a;
+  
+  --color-tertiary: #00666d;
+  --color-on-tertiary: #d0faff;
+  --color-tertiary-container: #19edfd;
+  --color-on-tertiary-container: #00535a;
+  
+  --color-background: #f1f8e9;
+  --color-on-background: #2f2f2f;
+  --color-surface: #f1f8e9;
+  --color-on-surface: #2f2f2f;
+  
+  --color-surface-container-lowest: #ffffff;
+  --color-surface-container-low: #ecf3e4;
+  --color-surface-container-high: #e2e2e2;
+  --color-surface-container-highest: #dddddd;
+  --color-surface-container: #e8e8e8;
+  --color-outline: #777777;
+  --color-outline-variant: #adadad;
+  --color-on-surface-variant: #5b5b5b;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-background);
+  color: var(--color-on-background);
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: var(--font-headline);
+}
+
+.pulse-soft {
+  animation: pulse-soft 3s infinite ease-in-out;
+}
+
+@keyframes pulse-soft {
+  0%, 100% { opacity: 0.6; }
+  50% { opacity: 1; }
+}
+
