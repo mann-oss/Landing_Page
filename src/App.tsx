@@ -11,7 +11,6 @@ import DailyMissions from './components/DailyMissions';
 import Pricing from './components/Pricing';
 import { 
   ProblemSection, 
-  HowItWorks, 
   GoatMode, 
   EarlyAccess, 
   Footer 
@@ -19,6 +18,8 @@ import {
 import { ExternalInputVars } from './types';
 import { BellRing, ShieldCheck, X, Sparkles } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
+import { CombinedStory } from './components/BalanceStory';
+import { Personas } from './components/Decisions';
 
 export default function App() {
   // Centralized state so changing inputs dynamically affects elements across components!
@@ -104,8 +105,11 @@ export default function App() {
         {/* Hero Banner with mascot and previews */}
         <Hero />
 
-        {/* Structural friction audit */}
-        <ProblemSection />
+        {/* Personas section */}
+        <Personas />
+
+        {/* Keeping CombinedStory here as requested - till the balance section */}
+        <CombinedStory />
 
         {/* Predictive Simulator cash flow grid */}
         <PredictiveCashFlow 
@@ -113,9 +117,6 @@ export default function App() {
           setInputs={setInputs} 
           onTriggerAlert={triggerNotification} 
         />
-
-        {/* Strategic Steps Connect-Analyze-Act */}
-        <HowItWorks />
 
         {/* Gamified Missions & Streaks Tracker */}
         <DailyMissions onScoreIncrement={handleScorePoints} />

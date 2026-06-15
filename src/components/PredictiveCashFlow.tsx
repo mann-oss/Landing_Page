@@ -3,7 +3,7 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import React, { useState, useMemo } from 'react';
+import React, { useMemo } from 'react';
 import { 
   TrendingUp, 
   Globe, 
@@ -13,10 +13,7 @@ import {
   ShieldAlert, 
   ArrowUpRight, 
   Activity, 
-  CheckCircle,
-  HelpCircle,
-  Bell,
-  ArrowRight
+  CheckCircle
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 import { ExternalInputVars } from '../types';
@@ -33,54 +30,6 @@ export default function PredictiveCashFlow({
   onTriggerAlert 
 }: PredictiveCashFlowProps) {
   
-  // Local state for chat widget inside bento
-  const [chatInput, setChatInput] = useState('');
-  const [chatLog, setChatLog] = useState<{ sender: 'user' | 'billy'; text: string }[]>([
-    { sender: 'billy', text: 'Hey there! "Can I afford that trip to Goa?" Ask me anything about your cash forecast.' }
-  ]);
-  const [isTyping, setIsTyping] = useState(false);
-
-  // Suggested questions
-  const suggestions = [
-    "Can I afford Goa next month?",
-    "How to save 10k extra?",
-    "Hedge against high inflation?"
-  ];
-
-  const handleSendChat = (text: string) => {
-    if (!text.trim()) return;
-    setChatLog(prev => [...prev, { sender: 'user', text }]);
-    setChatInput('');
-    setIsTyping(true);
-
-    // Formulate a fun, intelligent contextual financial response
-    setTimeout(() => {
-      let responseText = "Analyzing your cash flow ledger... Based on your current 90-day forecast, you have a solid runway! ";
-      
-      const textLower = text.toLowerCase();
-      if (textLower.includes('goa') || textLower.includes('trip') || textLower.includes('afford')) {
-        const costPrice = 35000;
-        const netPredict = projectedSavings;
-        if (netPredict > costPrice) {
-          responseText = `Absolutely! Your projected 90-day surplus is ₹${netPredict.toLocaleString()}. A ₹${costPrice.toLocaleString()} trip to Goa is perfectly safe. I'd recommend locking it in before airfare hikes!`;
-          onTriggerAlert("Goal Achieved ✅", "Goa Trip flight plan is within optimal budget parameters.", "success");
-        } else {
-          responseText = `It will be tight. Your projected 90-day surplus is ₹${netPredict.toLocaleString()}. Try bumping up 'Market Trends' or setting a subscription limit to save ₹8,000 more next week.`;
-          onTriggerAlert("Budget Nudge ⚠️", "Slight cash flow deficit for the proposed Goa vacation.", "warning");
-        }
-      } else if (textLower.includes('save') || textLower.includes('10k') || textLower.includes('extra')) {
-        responseText = "To save an extra ₹10,000 easily: 1) Switch to Billy Pro to unlock OCR subscription scrapers (saves ~₹4,500), 2) Auto-invest the current ₹6,000 food-delivery leak during market uptrends.";
-      } else if (textLower.includes('inflation') || textLower.includes('hedge')) {
-        responseText = `With inflation modeling set to ${inputs.inflationValue}%, your cash purchasing power depreciates by ₹${Math.round(1500 * (inputs.inflationValue / 5))} annually. Moving 25% surplus into indexed assets hedges this perfectly.`;
-      } else {
-        responseText = `Analyzing trends (Market: ${inputs.marketTrend}%, Inflation: ${inputs.inflationValue}%). Your 90-day cash trajectory is positive. I suggest keeping ₹40,000 in liquid buffers.`;
-      }
-
-      setChatLog(prev => [...prev, { sender: 'billy', text: responseText }]);
-      setIsTyping(false);
-    }, 1200);
-  };
-
   // Calculations for graph cash flow based on input variables
   const graphData = useMemo(() => {
     // Generate 10 data points for the 90 day period
@@ -460,196 +409,6 @@ export default function PredictiveCashFlow({
                 </span>
               </div>
             </div>
-          </div>
-
-          {/* AI Assistant Chat Widget (col-span-4) */}
-          <div id="ai-chat-card" className="md:col-span-4 bg-surface-container-highest rounded-3xl p-8 flex flex-col justify-between shadow-sm min-h-[340px]">
-            <div>
-              <div className="flex items-center gap-2 text-primary mb-4">
-                <span className="bg-primary/10 p-2 rounded-xl">
-                  <Sparkles size={20} />
-                </span>
-                <div>
-                  <h3 className="font-extrabold text-lg text-on-surface leading-tight">
-                    AI Assistant Chat
-                  </h3>
-                  <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider block">
-                    Interactive Ledger Query
-                  </span>
-                </div>
-              </div>
-
-              {/* Simple Chat window body */}
-              <div className="bg-white/50 border border-outline-variant/10 rounded-2xl p-4 h-48 overflow-y-auto mb-4 flex flex-col gap-2.5">
-                {chatLog.map((msg, i) => (
-                  <div key={i} className={`flex flex-col ${msg.sender === 'user' ? 'items-end' : 'items-start'}`}>
-                    <div className={`p-3 rounded-2xl text-xs max-w-[85%] leading-relaxed ${
-                      msg.sender === 'user' 
-                        ? 'bg-primary text-white rounded-tr-none' 
-                        : 'bg-white text-on-surface border border-outline-variant/5 rounded-tl-none shadow-sm'
-                    }`}>
-                      {msg.text}
-                    </div>
-                  </div>
-                ))}
-                {isTyping && (
-                  <div className="flex items-center gap-1.5 p-2 bg-white/30 rounded-xl max-w-[50px] justify-center mt-1">
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '0s' }}></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '150ms' }}></span>
-                    <span className="w-1.5 h-1.5 bg-primary rounded-full animate-bounce" style={{ animationDelay: '300ms' }}></span>
-                  </div>
-                )}
-              </div>
-
-              {/* Suggestion Chips */}
-              <div className="flex flex-wrap gap-1.5 mb-3">
-                {suggestions.map((sug, idx) => (
-                  <button 
-                    key={idx}
-                    onClick={() => handleSendChat(sug)}
-                    className="text-[10px] font-bold bg-white/85 text-on-surface-variant border border-outline-variant/25 px-2.5 py-1 rounded-full hover:bg-primary/10 hover:text-primary transition-colors hover:border-primary/20"
-                  >
-                    {sug}
-                  </button>
-                ))}
-              </div>
-            </div>
-
-            {/* Input Form */}
-            <form onSubmit={(e) => { e.preventDefault(); handleSendChat(chatInput); }} className="flex gap-2">
-              <input 
-                type="text" 
-                value={chatInput}
-                onChange={(e) => setChatInput(e.target.value)}
-                placeholder="Ask Billy (e.g. Can I afford trip?)"
-                className="flex-1 bg-white border border-outline-variant/20 rounded-xl px-4 py-2 text-xs focus:outline-none focus:ring-2 focus:ring-primary focus:border-transparent text-on-surface"
-              />
-              <button 
-                type="submit"
-                className="bg-primary text-[#d2ffc4] p-2 rounded-xl hover:scale-105 active:scale-95 transition-transform"
-              >
-                <ArrowRight size={16} />
-              </button>
-            </form>
-          </div>
-
-          {/* Smart Alerts Widgets (col-span-4) */}
-          <div id="smart-alerts-card" className="md:col-span-4 bg-surface-container-lowest rounded-3xl p-8 flex flex-col justify-between shadow-md border border-outline-variant/10">
-            <div>
-              <div className="flex items-center justify-between mb-4">
-                <div className="flex items-center gap-2 text-[#006630]">
-                  <Bell size={18} className="animate-swing" />
-                  <h3 className="font-extrabold text-lg text-on-surface">Smart Alerts</h3>
-                </div>
-                <span className="bg-red-500 text-white font-mono text-[9px] font-bold px-1.5 py-0.5 rounded-full">
-                  1 Urgent
-                </span>
-              </div>
-
-              <div className="space-y-3">
-                <div className="p-3.5 bg-amber-50 border border-amber-200/50 rounded-2xl flex items-start gap-2.5">
-                  <div className="bg-amber-100 p-1 rounded-lg text-amber-700 mt-0.5">
-                    <ShieldAlert size={14} />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-black text-amber-900 leading-tight mb-0.5">Deficit Threat Warned</h4>
-                    <p className="text-[10px] text-amber-800 leading-normal">
-                      High food delivery leak of ₹12,400 monthly deviates you from saving goal block.
-                    </p>
-                  </div>
-                </div>
-
-                <div className="p-3.5 bg-emerald-50 border border-emerald-200/50 rounded-2xl flex items-start gap-2.5">
-                  <div className="bg-emerald-100 p-1 rounded-lg text-emerald-700 mt-0.5">
-                    <TrendingUp size={14} />
-                  </div>
-                  <div>
-                    <h4 className="text-xs font-black text-emerald-900 leading-tight mb-0.5">Simulation Active</h4>
-                    <p className="text-[10px] text-emerald-800 leading-normal">
-                      Adjust inputs on the left context module to observe instant 90-day trajectory recalculations.
-                    </p>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="pt-4 mt-4 border-t border-outline-variant/10 flex items-center justify-between bg-stone-50 p-2.5 rounded-xl">
-              <span className="text-[10px] text-on-surface-variant font-bold uppercase tracking-wider block">Real-time alerts</span>
-              <span className="text-[10px] bg-primary/10 text-primary font-bold px-2 py-0.5 rounded-full">Continuous Nudge Engine</span>
-            </div>
-          </div>
-
-          {/* Not Just AI - (col-span-4) */}
-          <div className="md:col-span-4 bg-tertiary-container/15 border border-tertiary-container/35 rounded-3xl p-8 flex flex-col justify-between text-left">
-            <div className="flex items-center gap-2.5 text-tertiary mb-3">
-              <Globe size={24} />
-              <h3 className="text-lg font-extrabold text-on-tertiary-container">Not Just AI</h3>
-            </div>
-            
-            <p className="text-xs text-on-surface-variant leading-relaxed mb-6 font-medium">
-              Proprietary machine learning models continuously cross-evaluate market sentiment indicators alongside your past transaction behavior curves.
-            </p>
-            
-            <div className="p-3.5 bg-white/70 backdrop-blur-sm border border-tertiary-container/20 rounded-2xl">
-              <span className="text-[10px] uppercase font-black text-tertiary tracking-wider block mb-0.5">Mathematical Foundation</span>
-              <span className="text-xs font-bold text-on-surface italic">
-                "Informed by peer-reviewed research and elite hedge-fund risk models."
-              </span>
-            </div>
-          </div>
-
-          {/* Behavioral Insights (col-span-12) */}
-          <div id="behavioral-insights-card" className="md:col-span-12 bg-surface-container rounded-3xl p-8 flex flex-col md:flex-row items-center justify-between gap-6 border border-outline-variant/10 shadow-sm">
-            <div className="flex-1">
-              <div className="inline-block px-3 py-1 bg-secondary text-[#cdffd3] rounded-full text-[10px] font-bold uppercase tracking-widest mb-3">
-                Habit Evaluation
-              </div>
-              <h3 className="text-2xl font-black text-on-surface tracking-tight mb-2">
-                Behavioral Insights
-              </h3>
-              <p className="text-sm text-on-surface-variant leading-relaxed max-w-2xl font-medium">
-                Billy analyzes spending frequency, subscription usage velocity, and recurring billing alerts to suggest targeted, high-impact pivots. Most beta users save an average of ₹14,500 monthly by implementing just three automatic recommendations.
-              </p>
-            </div>
-
-            {/* Circular score display with percentage state */}
-            <div className="flex-shrink-0 bg-white p-5 rounded-2xl flex items-center gap-4 border border-outline-variant/15 shadow-sm">
-              <div className="relative w-20 h-20 flex items-center justify-center">
-                {/* SVG Ring */}
-                <svg className="w-20 h-20 transform -rotate-90">
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="34"
-                    stroke="#eaeaea"
-                    strokeWidth="5"
-                    fill="transparent"
-                  />
-                  <circle
-                    cx="40"
-                    cy="40"
-                    r="34"
-                    stroke="#006b0a"
-                    strokeWidth="5"
-                    fill="transparent"
-                    strokeDasharray={213}
-                    strokeDashoffset={213 - (213 * behaviorScore) / 100}
-                    className="transition-all duration-1000 ease-out"
-                  />
-                </svg>
-                <div className="absolute font-mono text-xl font-black text-primary">
-                  {behaviorScore}%
-                </div>
-              </div>
-              <div>
-                <span className="text-[10px] uppercase font-bold text-on-surface-variant block">Optimizer Potential</span>
-                <span className="text-xs font-black text-primary flex items-center gap-1">
-                  Peak Saving Efficiency <Sparkles size={12} />
-                </span>
-                <span className="text-[10px] text-on-surface-variant/80 block mt-0.5">Matches macro volatility</span>
-              </div>
-            </div>
-
           </div>
 
         </div>

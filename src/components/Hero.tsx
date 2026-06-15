@@ -3,83 +3,109 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
-import { Sparkles, TrendingUp, Activity, Bell } from 'lucide-react';
-import { motion } from 'motion/react';
+import { Sparkles, ArrowRight, MessageSquare, Loader2 } from 'lucide-react';
+import { motion, AnimatePresence } from 'motion/react';
+import { useState } from 'react';
 
-const HOLOGRAM_LIGHT_LEFT_OFFSET = 88;
-const HOLOGRAM_LOGO_LEFT_OFFSET = 36;
-const HOLOGRAM_TEXT_LEFT_OFFSET = 36;
+const QUESTIONS = [
+  "Can I afford a Goa trip next month?",
+  "Will I run short before payday?",
+  "How can I save ₹10,000 faster?",
+  "Which subscriptions should I cancel?",
+  "Can I increase my SIP safely?"
+];
 
-const BILLY_LOGO =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuCQSLGAmoNs3wioZdRbZ3B97qEd-bKRXHFJBQNUBiAWBoEvsgussiSiRq737suVApl_ehqXSZfOtAkGiLjuLnWj6B2U08JAas4JzIJ_RB3O08vhxnTtVI015GgwEASTWDPVvBzI3dzbaiGKX6xnkgJy-4LhXvv9QVSUoeBoEZU21xzXQ7m1MM4EYb8iNXpLYhHhmhwNA65YXaUsjkw2BjY1XEntg9DmyThdVyja3AVQC6-OncSkzuUnverulvYAPH4lOe9LORtbnq1o';
-
-const BRAIN_MATRIX_BG =
-  'https://lh3.googleusercontent.com/aida-public/AB6AXuBy9E0vfcgD1AUYrc3C75usDKZhRBM9ajRrtyMaZBbp1vnkzhfnsN9Ay4DGfEz7zUrlshC2CmReWDD1rpw4-PV25uw5_Y9bNk54syGfzA9yBngO1nOK5C18xcgnBHEMcpvYMm7nQXV6foAbwFY-coSpUfFvNXDMLmoNqDGucHYbO4EOZBNB4uhbVog4l5shW7TOzUTgs477_1kICgImKeTJlPEOChp290AqSqOj96MaI6bsf_4fswmVLGqLT1sBZJ-Yy1r0ZqN39C96';
+const RESPONSES: Record<string, string> = {
+  "Can I afford a Goa trip next month?": "Yes. Based on your current run-rate, you will have ₹32,000 surplus before payday. Isolating ₹15,000 for Goa keeps you safely above your 20% savings goal.",
+  "Will I run short before payday?": "You might. You have an upcoming annual insurance premium of ₹12,000 in 6 days. I suggest delaying non-essential purchases this weekend to maintain your buffer.",
+  "How can I save ₹10,000 faster?": "If you reduce weekend dining to your previous 30-day average, you will hit this goal 14 days earlier without altering your SIPs.",
+  "Which subscriptions should I cancel?": "You haven't used Spotify or Netflix on TV in 5 weeks, but you are still paying ₹998/mo. Canceling these adds ₹11,976 to your annual cash flow.",
+  "Can I increase my SIP safely?": "Yes. Your income has consistently exceeded expenses by 35% for 4 months. Bumping your SIP by ₹5,000 is safe and leaves a comfortable emergency buffer."
+};
 
 export default function Hero() {
-  return (
-    <section className="relative pt-12 pb-24 overflow-x-hidden bg-surface">
-      
-      {/* Decorative Blur Background Element */}
-      <div className="absolute top-1/4 right-0 w-96 h-96 bg-primary-container/20 blur-[130px] rounded-full pointer-events-none" />
-      <div className="absolute -top-12 left-1/4 w-80 h-80 bg-tertiary-container/15 blur-[120px] rounded-full pointer-events-none" />
+  const [selectedQuestion, setSelectedQuestion] = useState<string | null>(null);
+  const [isTyping, setIsTyping] = useState(false);
 
-      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+  const handleQuestionClick = (q: string) => {
+    setSelectedQuestion(q);
+    setIsTyping(true);
+    // Simulate AI thinking
+    setTimeout(() => {
+      setIsTyping(false);
+    }, 1500);
+  };
+
+  return (
+    <section className="relative pt-20 pb-40 overflow-hidden bg-background">
+      
+      {/* Animated Timeline Background */}
+      <div className="absolute inset-0 pointer-events-none opacity-[0.03] select-none flex flex-col justify-around text-4xl md:text-7xl font-mono font-black tracking-tighter overflow-hidden">
+         <motion.div animate={{ x: [0, -1000] }} transition={{ repeat: Infinity, duration: 40, ease: 'linear' }} className="whitespace-nowrap w-[200%] flex gap-16 text-primary">
+           <span>+₹85,000 SALARY IN</span> <span>+₹85,000 SALARY IN</span> <span>+₹85,000 SALARY IN</span>
+         </motion.div>
+         <motion.div animate={{ x: [-1000, 0] }} transition={{ repeat: Infinity, duration: 35, ease: 'linear' }} className="whitespace-nowrap w-[200%] flex gap-16 text-on-surface">
+           <span>-₹24,000 RENT OUT</span> <span>-₹10,000 SIP LOCKED</span> <span>-₹24,000 RENT OUT</span> <span>-₹10,000 SIP LOCKED</span>
+         </motion.div>
+         <motion.div animate={{ x: [0, -1000] }} transition={{ repeat: Infinity, duration: 45, ease: 'linear' }} className="whitespace-nowrap w-[200%] flex gap-16 text-secondary">
+           <span>-₹14,000 GOA PLANNED</span> <span>-₹6,100 BILLS DUE</span> <span>-₹14,000 GOA PLANNED</span>
+         </motion.div>
+      </div>
+      
+      {/* Ambient glow */}
+      <div className="absolute top-1/4 left-1/2 -translate-x-1/2 w-[800px] h-[600px] bg-primary/5 blur-[120px] rounded-full pointer-events-none" />
+
+      <div className="max-w-7xl mx-auto px-6 grid grid-cols-1 lg:grid-cols-2 gap-16 xl:gap-24 items-center relative z-10 mt-12">
         
         {/* Left Copy block */}
         <motion.div 
           initial={{ opacity: 0, x: -30 }}
           animate={{ opacity: 1, x: 0 }}
           transition={{ duration: 0.8, ease: "easeOut" }}
-          className="z-10"
+          className="flex flex-col items-start text-left"
         >
-          {/* Badge */}
-          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-primary-container text-on-primary-container rounded-full text-xs font-black uppercase tracking-widest mb-6 border border-primary/10">
-            <Sparkles size={11} className="text-primary animate-pulse" />
-            The Living Ledger
+          <span className="inline-flex items-center gap-1.5 px-4 py-1.5 bg-surface border border-outline-variant/60 shadow-sm text-on-surface-variant font-bold rounded-full text-xs uppercase tracking-widest mb-8">
+            <span className="w-2 h-2 rounded-full bg-primary animate-pulse" />
+            Built around your money life
           </span>
 
-          {/* Heading */}
-          <h1 className="text-5xl md:text-8xl font-black tracking-tighter leading-[0.95] text-on-surface mb-8 font-headline">
-            This isn't tracking. This is <span className="text-primary italic font-black">control.</span>
+          <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[1.05] text-on-surface mb-6 font-headline">
+            Your AI Financial <br />
+            <span className="text-primary italic">Brain.</span>
           </h1>
 
-          {/* Paragraph explanation */}
-          <p className="text-lg md:text-xl text-on-surface-variant max-w-lg mb-10 leading-relaxed font-semibold">
-            Meet Billy, your AI financial brain. We don't just log historic transactions—we map your 90-day cash trajectory, predict market impacts, and help you decide your next financial move.
+          <p className="text-lg md:text-xl text-on-surface-variant max-w-lg mb-12 leading-relaxed font-medium">
+            Billy learns how you earn, spend, save, and live, then helps you make your next money decision confidently.
           </p>
 
-          {/* Call to Actions */}
-          <div className="flex flex-col sm:flex-row gap-4">
+          <div className="flex flex-col items-start gap-4">
             <a 
-              href="#beta" 
-              className="bg-primary text-on-primary px-10 py-5 rounded-full font-black text-lg hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/25 text-center flex items-center justify-center gap-2"
+              href="#build" 
+              className="bg-on-surface text-surface px-10 py-5 rounded-2xl font-bold text-lg hover:scale-[1.02] active:scale-95 transition-all text-center flex items-center justify-center shadow-lg hover:shadow-on-surface/20"
             >
-              Join Free Beta 
+              Build My Billy
             </a>
-            <a 
-              href="#brain-section"
-              className="bg-surface-container-highest text-on-surface px-10 py-5 rounded-full font-black text-lg hover:bg-surface-container-high transition-all text-center flex items-center justify-center border border-outline-variant/15"
-            >
-              Analyze the Brain
-            </a>
+            <p className="text-xs font-bold text-on-surface-variant uppercase tracking-widest mt-2">
+              Free beta · Read-only access · Disconnect anytime
+            </p>
           </div>
         </motion.div>
 
-        {/* Holographic Phone with Billy AI projection */}
+        {/* Right Interaction Block - Holographic Mobile Device */}
         <motion.div
-          initial={{ opacity: 0, y: 30, scale: 0.95 }}
-          animate={{ opacity: 1, y: 0, scale: 1 }}
+          initial={{ opacity: 0, y: 30 }}
+          animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.9, delay: 0.15, ease: 'easeOut' }}
-          className="relative w-full h-[640px] flex items-center justify-center perspective-[1200px] overflow-visible"
+          className="relative w-full h-[650px] flex items-center justify-center perspective-[1200px]"
         >
-          <div className="absolute inset-0 bg-primary-container/10 blur-[100px] rounded-full" />
+          <div className="absolute inset-0 bg-primary/10 blur-[100px] rounded-full pointer-events-none" />
 
+          {/* 3D Device Container */}
           <motion.div
-            initial={{ rotateX: 60, rotateY: 0, rotateZ: -35 }}
+            initial={{ rotateX: 12, rotateY: -16, rotateZ: 2 }}
             animate={{
-              rotateX: [60, 58, 60],
-              rotateZ: [-35, -34, -35],
+              rotateX: [12, 14, 12],
+              rotateY: [-16, -14, -16],
               y: [0, -10, 0],
             }}
             transition={{
@@ -87,221 +113,98 @@ export default function Hero() {
               repeat: Infinity,
               ease: 'easeInOut',
             }}
-            className="relative w-[280px] h-[580px] z-10"
+            className="relative w-[320px] h-[640px] z-10"
             style={{ transformStyle: 'preserve-3d' }}
           >
-            <div
-              className="absolute inset-0 bg-stone-900 rounded-[3rem] shadow-[20px_20px_60px_rgba(0,0,0,0.15),-20px_-20px_60px_rgba(255,255,255,0.5)] border-[8px] border-stone-800 flex items-center justify-center overflow-visible"
+             {/* Phone Body & Bezel */}
+             <div
+              className="absolute inset-0 bg-stone-900 rounded-[3rem] shadow-[-20px_20px_40px_rgba(0,0,0,0.4),20px_-20px_40px_rgba(255,255,255,0.05)] border-[8px] border-stone-800 flex flex-col overflow-hidden"
               style={{ transformStyle: 'preserve-3d' }}
-            >
-              <div className="absolute inset-0 bg-stone-950 rounded-[2.5rem] overflow-hidden border border-stone-700">
-                <div className="p-4 h-full flex flex-col relative">
-                  <div className="w-14 h-1 bg-stone-800 mx-auto rounded-full mb-4 shrink-0" />
-
-                  <div
-                    className="absolute inset-0 opacity-15 pointer-events-none"
-                    style={{
-                      backgroundImage:
-                        'linear-gradient(#333 1px, transparent 1px), linear-gradient(90deg, #333 1px, transparent 1px)',
-                      backgroundSize: '16px 16px',
-                    }}
-                  />
-
-                  {/* Mini app header */}
-                  <div className="flex items-center gap-1.5 mb-3 relative z-10 shrink-0">
-                    <img alt="" src={BILLY_LOGO} className="w-5 h-5 object-contain" />
-                    <span className="text-[10px] font-black text-stone-200">Billy</span>
-                    <span className="ml-auto flex items-center gap-1 text-[7px] font-bold uppercase tracking-wider text-primary-container bg-primary-container/10 px-1.5 py-0.5 rounded-full">
-                      <Activity size={8} className="animate-pulse" />
-                      Brain Active
-                    </span>
+             >
+                {/* Screen Content */}
+                <div className="absolute inset-0 bg-surface-container-lowest flex flex-col relative p-5 pt-10 overflow-y-auto no-scrollbar scroll-smooth border border-stone-700 rounded-[2.5rem]">
+                  
+                  {/* Dynamic Island / Notch */}
+                  <div className="absolute top-0 inset-x-0 h-6 flex justify-center items-end pb-1 pointer-events-none z-20">
+                    <div className="w-24 h-5 bg-stone-900 rounded-b-3xl" />
                   </div>
 
-                  {/* Pseudo bento tiles — brain section mini */}
-                  <div className="grid grid-cols-2 gap-1.5 relative z-10 flex-1 min-h-0">
-                    <div className="col-span-2 bg-[#041a05] rounded-xl p-2 border border-white/5 relative overflow-hidden">
-                      <div
-                        className="absolute inset-0 opacity-20 mix-blend-overlay pointer-events-none"
-                        style={{
-                          backgroundImage: `url("${BRAIN_MATRIX_BG}")`,
-                          backgroundSize: 'cover',
-                          backgroundPosition: 'center',
-                        }}
-                      />
-                      <div className="relative">
-                        <span className="text-[7px] font-bold uppercase tracking-wider text-stone-400 block">
-                          90-Day Simulation
-                        </span>
-                        <span className="text-[9px] font-black text-white leading-tight block">
-                          Predictive Cash Flow
-                        </span>
-                        <div className="mt-1.5 h-8 w-full bg-white/[0.03] border border-white/5 rounded-lg p-1 flex items-end">
-                          <svg viewBox="0 0 80 24" className="w-full h-full" preserveAspectRatio="none">
-                            <path
-                              d="M0 18 C10 16, 15 8, 25 10 S45 4, 55 6 S70 2, 80 4"
-                              fill="none"
-                              stroke="#59ee50"
-                              strokeWidth="2"
-                              strokeLinecap="round"
-                            />
-                            <path
-                              d="M0 18 C10 16, 15 8, 25 10 S45 4, 55 6 S70 2, 80 4 L80 24 L0 24 Z"
-                              fill="url(#heroChartFill)"
-                              opacity="0.35"
-                            />
-                            <defs>
-                              <linearGradient id="heroChartFill" x1="0" y1="0" x2="0" y2="1">
-                                <stop offset="0%" stopColor="#59ee50" />
-                                <stop offset="100%" stopColor="#59ee50" stopOpacity="0" />
-                              </linearGradient>
-                            </defs>
-                          </svg>
-                        </div>
-                        <span className="text-[8px] font-mono font-bold text-[#59ee50] mt-1 block">
-                          ₹2,18,400 projected
-                        </span>
-                      </div>
+                  <div className="flex items-center gap-3 mb-6 pb-6 border-b border-outline-variant/30 mt-2">
+                    <div className="w-10 h-10 bg-primary/10 rounded-full flex items-center justify-center border border-primary/20 shrink-0">
+                       <MessageSquare size={16} className="text-primary" />
                     </div>
-
-                    <div className="bg-stone-800/70 rounded-xl p-2 border border-stone-700/50">
-                      <span className="text-[7px] font-bold uppercase tracking-wider text-primary-container bg-primary/30 px-1 py-0.5 rounded-full inline-block mb-1">
-                        Context
-                      </span>
-                      <span className="text-[8px] font-black text-stone-200 block leading-tight">
-                        External Inputs
-                      </span>
-                      <div className="mt-1.5 space-y-1">
-                        <div className="h-1 bg-stone-700 rounded-full overflow-hidden">
-                          <div className="h-full w-[68%] bg-primary-container rounded-full" />
-                        </div>
-                        <div className="h-1 bg-stone-700 rounded-full overflow-hidden">
-                          <div className="h-full w-[42%] bg-tertiary-container rounded-full" />
-                        </div>
-                      </div>
-                    </div>
-
-                    <div className="bg-stone-800/70 rounded-xl p-2 border border-stone-700/50 flex flex-col">
-                      <div className="flex items-center gap-1 mb-1">
-                        <Sparkles size={8} className="text-primary-container" />
-                        <span className="text-[8px] font-black text-stone-200">AI Chat</span>
-                      </div>
-                      <div className="bg-white/10 rounded-lg px-1.5 py-1 text-[6px] text-stone-300 leading-snug flex-1">
-                        Can I afford Goa next month?
-                      </div>
-                    </div>
-
-                    <div className="col-span-2 bg-amber-950/50 rounded-xl px-2 py-1.5 border border-amber-500/25 flex items-center gap-1.5">
-                      <Bell size={9} className="text-amber-400 shrink-0" />
-                      <div className="min-w-0">
-                        <span className="text-[7px] font-black text-amber-200 block leading-tight">
-                          Smart Alert
-                        </span>
-                        <span className="text-[6px] text-amber-300/80 truncate block">
-                          Deficit threat — review subscriptions
-                        </span>
-                      </div>
-                      <TrendingUp size={9} className="text-emerald-400 ml-auto shrink-0" />
+                    <div>
+                      <h3 className="font-bold text-on-surface text-[15px] leading-tight">What are you trying to figure out?</h3>
                     </div>
                   </div>
+
+                  <div className="space-y-3 mb-6">
+                    {QUESTIONS.map((q, idx) => (
+                      <button
+                        key={idx}
+                        onClick={() => handleQuestionClick(q)}
+                        className={`w-full text-left p-3.5 rounded-xl border transition-all duration-300 text-[13px] font-medium flex items-center gap-2 group ${
+                          selectedQuestion === q 
+                            ? 'bg-primary border-primary text-on-primary shadow-md' 
+                            : 'bg-surface-container border-outline-variant/50 hover:border-primary/50 text-on-surface'
+                        }`}
+                      >
+                        <span className="flex-1 leading-snug">{q}</span>
+                        <ArrowRight size={14} className={`shrink-0 transition-transform duration-300 ${selectedQuestion === q ? 'opacity-100 translate-x-0' : 'opacity-0 -translate-x-2 group-hover:opacity-100 group-hover:translate-x-0 group-hover:text-primary'}`} />
+                      </button>
+                    ))}
+                  </div>
+
+                  <AnimatePresence mode="wait">
+                    {selectedQuestion && (
+                      <motion.div
+                        initial={{ opacity: 0, height: 0 }}
+                        animate={{ opacity: 1, height: 'auto' }}
+                        exit={{ opacity: 0, height: 0 }}
+                        className="bg-surface-container-highest border border-primary/30 rounded-xl p-4 relative overflow-hidden shrink-0 shadow-[0_0_20px_rgba(89,238,80,0.15)] mt-auto"
+                      >
+                        {isTyping ? (
+                          <div className="flex items-center gap-2 text-primary font-mono text-[11px] py-2">
+                             <Loader2 size={14} className="animate-spin shrink-0" />
+                             Recalculating timeline...
+                          </div>
+                        ) : (
+                          <motion.div 
+                            initial={{ opacity: 0 }}
+                            animate={{ opacity: 1 }}
+                            transition={{ duration: 0.4 }}
+                          >
+                            <div className="flex items-center gap-1.5 mb-2 text-[10px] font-bold text-primary uppercase tracking-wider">
+                              <Sparkles size={10} /> Billy AI
+                            </div>
+                            <p className="text-on-surface text-[13px] leading-relaxed">
+                              {RESPONSES[selectedQuestion]}
+                            </p>
+                          </motion.div>
+                        )}
+                      </motion.div>
+                    )}
+                  </AnimatePresence>
+
                 </div>
-              </div>
+             </div>
 
-              <div
-                className="absolute top-[40%] left-1/2 z-20"
-                style={{
-                  transformStyle: 'preserve-3d',
-                  transform: 'translateX(-50%) translateY(-50%) rotateX(-90deg) translateZ(24px)',
-                }}
-              >
-                {/* Hologram light beam — offset left to align with phone screen */}
-                <div
-                  className="absolute bottom-0 left-1/2"
-                  style={{ transform: `translateX(calc(-50% - ${HOLOGRAM_LIGHT_LEFT_OFFSET}px))` }}
-                >
+             {/* Hologram Light coming out of phone when answering */}
+             <AnimatePresence>
+                {selectedQuestion && !isTyping && (
                   <motion.div
-                    initial={{ opacity: 0.5, scaleY: 0.8 }}
-                    animate={{ opacity: [0.4, 0.7, 0.4], scaleY: [0.9, 1.1, 0.9] }}
-                    transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut' }}
-                    className="absolute bottom-0 left-1/2 w-48 h-80 origin-bottom"
-                    style={{
-                      transform: 'translateX(-50%)',
-                      background:
-                        'linear-gradient(to top, rgba(89, 238, 80, 0.8) 0%, rgba(89, 238, 80, 0.1) 40%, transparent 100%)',
-                      clipPath: 'polygon(20% 0%, 80% 0%, 100% 100%, 0% 100%)',
-                      filter: 'blur(8px)',
-                    }}
-                  />
-
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 2], opacity: [0.8, 0, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut' }}
-                    className="absolute bottom-0 left-1/2 w-24 h-24 rounded-full border-2 border-primary-container"
-                    style={{ transform: 'translateX(-50%) rotateX(75deg)' }}
-                  />
-                  <motion.div
-                    animate={{ scale: [1, 1.5, 2], opacity: [0.8, 0, 0] }}
-                    transition={{ duration: 2, repeat: Infinity, ease: 'easeOut', delay: 0.6 }}
-                    className="absolute bottom-0 left-1/2 w-24 h-24 rounded-full border-2 border-primary-container"
-                    style={{ transform: 'translateX(-50%) rotateX(75deg)' }}
-                  />
-                </div>
-
-                {/* Transparent holographic Billy logo — aligned to beam angle */}
-                <motion.div
-                  animate={{
-                    y: [-40, -58, -40],
-                  }}
-                  transition={{ duration: 4, repeat: Infinity, ease: 'easeInOut' }}
-                  className="absolute bottom-[10.5rem] left-1/2 flex items-center justify-center pointer-events-none"
-                  style={{
-                    transformStyle: 'preserve-3d',
-                    x: `calc(-50% - ${HOLOGRAM_LOGO_LEFT_OFFSET}px)`,
-                    z: 72,
-                  }}
-                >
-                  <div className="relative w-28 h-28">
-                    <motion.div
-                      className="absolute inset-0 bg-primary-container/35 blur-2xl rounded-full scale-125"
-                      animate={{ scale: [1.15, 1.35, 1.15], opacity: [0.3, 0.55, 0.3] }}
-                      transition={{ duration: 2, repeat: Infinity }}
-                    />
-                    <img
-                      alt=""
-                      aria-hidden
-                      src={BILLY_LOGO}
-                      className="absolute inset-0 w-full h-full object-contain opacity-35 blur-[2px] scale-110"
-                    />
-                    <img
-                      alt="Billy Logo"
-                      src={BILLY_LOGO}
-                      className="relative w-full h-full object-contain opacity-[0.82]"
-                      style={{
-                        filter:
-                          'drop-shadow(0 0 16px rgba(89,238,80,0.95)) drop-shadow(0 0 32px rgba(89,238,80,0.45)) saturate(1.2)',
-                      }}
-                    />
-                  </div>
-                </motion.div>
-
-                <motion.div
-                  animate={{ y: [-20, -30, -20], opacity: [0.55, 0.95, 0.55] }}
-                  transition={{ duration: 3, repeat: Infinity, ease: 'easeInOut', delay: 0.5 }}
-                  className="absolute bottom-20 left-1/2 whitespace-nowrap text-primary-container font-mono font-bold tracking-widest text-lg"
-                  style={{
-                    x: `calc(-50% - ${HOLOGRAM_TEXT_LEFT_OFFSET}px)`,
-                    z: 56,
-                    textShadow: '0 0 10px #59ee50, 0 0 22px #59ee50',
-                  }}
-                >
-                  BILLY. AI
-                </motion.div>
-              </div>
-            </div>
-
-            <div className="absolute -bottom-10 -left-10 w-[300px] h-[300px] bg-black/10 blur-3xl transform -translate-z-20 rounded-full" />
+                    initial={{ opacity: 0, scaleZ: 0 }}
+                    animate={{ opacity: 1, scaleZ: 1 }}
+                    exit={{ opacity: 0, scaleZ: 0 }}
+                    className="absolute inset-0 pointer-events-none"
+                    style={{ transform: 'translateZ(40px)' }}
+                  >
+                     <div className="absolute top-1/3 -left-10 w-full h-[150%] bg-gradient-to-t from-primary/0 via-primary/10 to-primary/0 blur-2xl transform -rotate-12" />
+                  </motion.div>
+                )}
+             </AnimatePresence>
           </motion.div>
         </motion.div>
-
       </div>
     </section>
   );
