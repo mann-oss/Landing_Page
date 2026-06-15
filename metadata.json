@@ -1,6 +1,5 @@
 {
   "name": "Billy",
   "description": "Meet Billy, your AI financial brain. Predict your cash flow, smart alerts, behavioral insights, and level up your money game.",
-  "requestFramePermissions": [],
-  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+  "requestFramePermissions": []
 }
