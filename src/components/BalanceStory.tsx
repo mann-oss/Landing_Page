@@ -160,7 +160,9 @@ export function CombinedStory() {
                    <div className="ticker-track mask-fade-x w-full">
                      <div className="ticker-rail animate-marquee-rtl">
                        {[...MESSY_TICKER_A, ...MESSY_TICKER_A].map((item, i) => (
-                         <TickerChip key={`a-${i}`} item={item} />
+                         <span key={`a-${i}`} className="contents">
+                           <TickerChip item={item} />
+                         </span>
                        ))}
                      </div>
                    </div>
@@ -168,7 +170,9 @@ export function CombinedStory() {
                    <div className="ticker-track mask-fade-x w-full">
                      <div className="ticker-rail animate-marquee-ltr">
                        {[...MESSY_TICKER_B, ...MESSY_TICKER_B].map((item, i) => (
-                         <TickerChip key={`b-${i}`} item={item} />
+                         <span key={`b-${i}`} className="contents">
+                           <TickerChip item={item} />
+                         </span>
                        ))}
                      </div>
                    </div>
@@ -176,7 +180,9 @@ export function CombinedStory() {
                    <div className="ticker-track mask-fade-x w-full">
                      <div className="ticker-rail animate-marquee-rtl-slow">
                        {[...MESSY_TICKER_C, ...MESSY_TICKER_C].map((item, i) => (
-                         <TickerChip key={`c-${i}`} item={item} />
+                         <span key={`c-${i}`} className="contents">
+                           <TickerChip item={item} />
+                         </span>
                        ))}
                      </div>
                    </div>

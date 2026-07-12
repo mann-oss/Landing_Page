@@ -55,6 +55,13 @@
   --color-sapphire-950: #040914;
   --color-gold-400: #dfb15b;
   --color-gold-500: #c59b27;
+
+  /* Pitch deck */
+  --font-display: "Space Grotesk", "Inter", sans-serif;
+  --color-brand-core: #10B981;
+  --color-brand-blu: #00F0FF;
+  --color-bg-core: #F9F9F7;
+  --color-bg-blu: #050A1A;
 }
 
 body {

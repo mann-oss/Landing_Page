@@ -400,7 +400,7 @@ export function EarlyAccess() {
   );
 }
 
-export function Footer() {
+export function Footer({ onOpenPitch }: { onOpenPitch?: () => void }) {
   const links = ['Privacy', 'Terms', 'Security', 'Contact'];
 
   const handleShare = () => {
@@ -468,6 +468,19 @@ export function Footer() {
         </div>
 
       </div>
+
+      {onOpenPitch && (
+        <div className="pb-4 flex justify-center">
+          <button
+            type="button"
+            onClick={onOpenPitch}
+            className="font-mono text-[8px] uppercase tracking-[0.28em] text-stone-300 hover:text-stone-500 transition-colors cursor-pointer px-2 py-0.5"
+            title="Open pitch deck"
+          >
+            pitch
+          </button>
+        </div>
+      )}
     </footer>
   );
 }

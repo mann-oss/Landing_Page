@@ -25,6 +25,7 @@ interface BillyGreenLandingProps {
   /** Split: logo + headline only */
   peek?: boolean;
   showBack?: boolean;
+  onOpenPitch?: () => void;
 }
 
 const EASE = [0.22, 1, 0.36, 1] as const;
@@ -33,6 +34,7 @@ export default function BillyGreenLanding({
   onBack,
   peek = false,
   showBack = true,
+  onOpenPitch,
 }: BillyGreenLandingProps) {
   const [inputs, setInputs] = useState<ExternalInputVars>({
     marketTrend: 22,
@@ -144,7 +146,7 @@ export default function BillyGreenLanding({
               <Pricing />
               <GoatMode />
               <EarlyAccess />
-              <Footer />
+              <Footer onOpenPitch={onOpenPitch} />
             </motion.div>
           )}
         </AnimatePresence>

@@ -20,6 +20,7 @@ export type FlavorMode = 'split' | 'green' | 'blue';
 interface SplitLandingProps {
   mode: FlavorMode;
   onModeChange: (mode: FlavorMode) => void;
+  onOpenPitch?: () => void;
 }
 
 const FULL = 'polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%)';
@@ -37,7 +38,7 @@ const BLUE_SHRUNK = 'polygon(72% 0%, 100% 0%, 100% 100%, 58% 100%)';
 const WIPE_EASE = [0.32, 0.72, 0, 1] as const;
 const OPEN_S = 1.05;
 
-export default function SplitLanding({ mode, onModeChange }: SplitLandingProps) {
+export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitLandingProps) {
   const [hovered, setHovered] = useState<AppFlavor>(null);
   const [opening, setOpening] = useState<'green' | 'blue' | null>(null);
   const [closingFrom, setClosingFrom] = useState<'green' | 'blue' | null>(null);
@@ -196,6 +197,7 @@ export default function SplitLanding({ mode, onModeChange }: SplitLandingProps) 
               onBack={handleBack}
               peek={greenPeek}
               showBack={greenLive}
+              onOpenPitch={onOpenPitch}
             />
           </div>
 
