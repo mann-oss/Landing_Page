@@ -20,7 +20,7 @@ export default function BillyBlueDashboard({ onBack }: BillyBlueDashboardProps) 
         src="/bblu3.0.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-[0.18] scale-105"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[42%_42%] opacity-[0.18] scale-105"
       />
       <div className="absolute inset-0 bg-gradient-to-b from-[#050a12]/75 via-[#050a12]/55 to-[#050a12]/90" />
       <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_70%_40%,rgba(56,189,248,0.12),transparent_55%)]" />
