@@ -214,15 +214,7 @@ export function EarlyAccess() {
     setPhase('sending');
 
     try {
-      const { submitEarlyAccessEmail, isSupabaseConfigured } = await import(
-        '../lib/supabase'
-      );
-
-      if (!isSupabaseConfigured) {
-        throw new Error(
-          'Supabase env missing. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env',
-        );
-      }
+      const { submitEarlyAccessEmail } = await import('../lib/supabase');
 
       await submitEarlyAccessEmail(email);
 
@@ -231,15 +223,20 @@ export function EarlyAccess() {
       setSuccess(true);
       setEmail('');
     } catch (err: unknown) {
-      const message =
-        err && typeof err === 'object' && 'message' in err
-          ? String((err as { message: string }).message)
-          : 'Something went wrong. Try again.';
-      // Unique violation
-      if (message.toLowerCase().includes('duplicate') || message.includes('23505')) {
-        setErrorMsg('This email is already on the early access list.');
+      const code =
+        err &&
+        typeof err === 'object' &&
+        'code' in err &&
+        typeof (err as { code: unknown }).code === 'string'
+          ? (err as { code: string }).code
+          : null;
+
+      if (code === 'duplicate' || code === 'unavailable' || code === 'invalid') {
+        const { earlyAccessUserMessage } = await import('../lib/supabase');
+        setErrorMsg(earlyAccessUserMessage(code));
       } else {
-        setErrorMsg(message);
+        console.error('[early-access] unexpected error', err);
+        setErrorMsg('Something went wrong. Please try again in a moment.');
       }
       setPhase('idle');
     } finally {
