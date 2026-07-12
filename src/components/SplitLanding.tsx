@@ -175,7 +175,7 @@ export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitL
           onClick={() => {
             if (isSplit) openFlavor('green');
           }}
-          className={`w-full z-10 bg-background ${
+          className={`w-full z-10 bg-transparent ${
             greenLive
               ? 'relative min-h-screen'
               : 'absolute inset-0 h-screen overflow-hidden will-change-[clip-path]'
@@ -187,21 +187,8 @@ export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitL
             pointerEvents: greenLive || isSplit ? 'auto' : 'none',
           }}
         >
-          {/* Faded Billy art — full-bleed so the diagonal clip shows the green half */}
-          {!greenLive && (
-            <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden" aria-hidden>
-              <img
-                src="/billy3.0.png"
-                alt=""
-                className="absolute inset-0 h-full w-full object-cover object-[58%_42%] opacity-[0.34] scale-105"
-              />
-              <div className="absolute inset-0 bg-gradient-to-r from-background via-background/70 to-background/35" />
-              <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_35%_45%,rgba(16,185,129,0.14),transparent_55%)]" />
-            </div>
-          )}
-
           <div
-            className={`relative z-10 ${greenPeek ? 'pointer-events-none' : 'min-h-screen'}`}
+            className={greenPeek ? 'pointer-events-none' : 'min-h-screen'}
             style={{ width: '100%' }}
           >
             <BillyGreenLanding
@@ -315,12 +302,11 @@ function BlueSplitPreview({
         src="/bblu3.0.png"
         alt=""
         aria-hidden
-        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-[42%_42%] opacity-[0.28] scale-105"
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-[0.22] scale-110"
       />
-      <div className="absolute inset-0 bg-gradient-to-l from-[#050a12] via-[#050a12]/75 to-[#050a12]/40" />
+      <div className="absolute inset-0 bg-[#050a12]/70" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(56,189,248,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(56,189,248,0.015)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
       <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-sky-950/30 blur-[130px] pointer-events-none" />
-      <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_65%_45%,rgba(56,189,248,0.12),transparent_55%)]" />
 
       <div className="absolute top-[18%] right-[6%] md:right-[10%] w-[88%] md:w-[36%] z-20 text-right flex flex-col items-end pointer-events-none">
         <div className="flex items-center gap-1.5 mb-4 justify-end">

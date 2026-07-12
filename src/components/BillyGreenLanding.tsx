@@ -71,7 +71,19 @@ export default function BillyGreenLanding({
   };
 
   return (
-    <div className="relative min-h-screen bg-background selection:bg-primary selection:text-on-primary antialiased text-on-background">
+    <div className="relative min-h-screen selection:bg-primary selection:text-on-primary antialiased text-on-background">
+      {/* Green-side product art — clipped with the green panel only */}
+      <div className="pointer-events-none absolute inset-0 z-0 overflow-hidden" aria-hidden>
+        <img
+          src="/billy3.0.png"
+          alt=""
+          className="absolute inset-0 h-full w-full object-cover object-center opacity-[0.2] scale-105"
+        />
+        <div className="absolute inset-0 bg-background/70" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_at_30%_35%,rgba(16,185,129,0.12),transparent_55%)]" />
+      </div>
+
+      <div className="relative z-10">
       <AnimatePresence>
         {!peek && (
           <motion.div
@@ -151,6 +163,7 @@ export default function BillyGreenLanding({
           )}
         </AnimatePresence>
       </main>
+      </div>
     </div>
   );
 }

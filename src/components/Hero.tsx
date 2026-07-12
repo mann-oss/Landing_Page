@@ -50,8 +50,8 @@ export default function Hero({ peek = false }: HeroProps) {
 
   return (
     <section
-      className={`relative overflow-hidden bg-background ${
-        peek ? 'h-screen flex items-center' : 'pt-20 pb-40'
+      className={`relative overflow-hidden ${
+        peek ? 'h-screen flex items-center bg-transparent' : 'pt-20 pb-40 bg-transparent'
       }`}
     >
       <AnimatePresence>
