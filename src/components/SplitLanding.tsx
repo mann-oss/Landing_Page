@@ -178,7 +178,7 @@ export default function SplitLanding({ mode, onModeChange }: SplitLandingProps) 
           }}
           className={`w-full z-10 bg-background ${
             greenLive
-              ? 'relative min-h-screen overflow-visible'
+              ? 'relative min-h-screen overflow-x-hidden'
               : 'absolute inset-0 h-screen overflow-hidden will-change-[clip-path]'
           } ${isSplit ? 'cursor-pointer' : ''}`}
           style={{

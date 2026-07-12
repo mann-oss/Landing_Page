@@ -108,22 +108,28 @@ h1, h2, h3, h4, h5, h6 {
 .animate-marquee-rtl {
   display: flex;
   width: max-content;
+  will-change: transform;
   animation: marquee-rtl 28s linear infinite;
 }
 
 .animate-marquee-rtl-slow {
   display: flex;
   width: max-content;
+  will-change: transform;
   animation: marquee-rtl 40s linear infinite;
 }
 
 .animate-marquee-ltr {
   display: flex;
   width: max-content;
+  will-change: transform;
   animation: marquee-ltr 32s linear infinite;
 }
 
+/* Keep ticker tracks from expanding page width / causing sideways scroll */
 .mask-fade-x {
+  overflow: hidden;
+  max-width: 100%;
   -webkit-mask-image: linear-gradient(
     to right,
     transparent,

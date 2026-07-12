@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
+import { motion, useScroll, AnimatePresence } from 'motion/react';
 import { ScanLine, Users, Activity, Receipt, MapPin, Utensils, Zap, AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
 
 type TickerItem = {
@@ -56,6 +56,35 @@ function TickerChip({ item }: { item: TickerItem }) {
   );
 }
 
+const BALANCE_START = 12400;
+const BALANCE_AFTER_EXPENSE = BALANCE_START - 2860; // 9,540
+const BALANCE_AFTER_SPLIT = BALANCE_AFTER_EXPENSE + 1080; // 10,620
+const BALANCE_AFTER_PATTERN = BALANCE_AFTER_SPLIT - 2220; // 8,400
+
+function lerp(a: number, b: number, t: number) {
+  const clamped = Math.min(1, Math.max(0, t));
+  return a + (b - a) * clamped;
+}
+
+/** Single source of truth — avoids racing transform listeners fighting each other */
+function balanceFromProgress(v: number): number {
+  if (v < 0.25) return BALANCE_START;
+  if (v < 0.35) return lerp(BALANCE_START, BALANCE_AFTER_EXPENSE, (v - 0.25) / 0.1);
+  if (v < 0.45) return BALANCE_AFTER_EXPENSE;
+  if (v < 0.55) return lerp(BALANCE_AFTER_EXPENSE, BALANCE_AFTER_SPLIT, (v - 0.45) / 0.1);
+  if (v < 0.65) return BALANCE_AFTER_SPLIT;
+  if (v < 0.75) return lerp(BALANCE_AFTER_SPLIT, BALANCE_AFTER_PATTERN, (v - 0.65) / 0.1);
+  return BALANCE_AFTER_PATTERN;
+}
+
+function stageFromProgress(v: number): number {
+  if (v < 0.2) return 0;
+  if (v < 0.4) return 1;
+  if (v < 0.6) return 2;
+  if (v < 0.8) return 3;
+  return 4;
+}
+
 export function CombinedStory() {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -65,37 +94,16 @@ export function CombinedStory() {
   });
 
   const [activeStage, setActiveStage] = useState(0);
-  const [currentDisplay, setCurrentDisplay] = useState(12400);
+  const [currentDisplay, setCurrentDisplay] = useState(BALANCE_START);
 
-  // Map scroll progress to 5 stages (0 to 4)
   useEffect(() => {
-    return scrollYProgress.on("change", (v) => {
-      if (v < 0.2) setActiveStage(0); // Messy Spending
-      else if (v < 0.4) setActiveStage(1); // Captured
-      else if (v < 0.6) setActiveStage(2); // Shared
-      else if (v < 0.8) setActiveStage(3); // Pattern
-      else setActiveStage(4); // Decision Ready
-    });
+    const apply = (v: number) => {
+      setActiveStage(stageFromProgress(v));
+      setCurrentDisplay(balanceFromProgress(v));
+    };
+    apply(scrollYProgress.get());
+    return scrollYProgress.on('change', apply);
   }, [scrollYProgress]);
-
-  // Animated Numbers Engine
-  // Starting balance: 12400
-  // Stage 1 to 2 -> subtract total Cab & Restaurant (2860) -> 9540
-  // Stage 2 to 3 -> Identify Riya's share (+1080) -> 10620
-  // Stage 3 to 4 -> Identify weekend food (-2220) -> 8400
-  const rawBalance = 12400;
-  
-  const expenseDrop = useTransform(scrollYProgress, [0.25, 0.35], [0, 1]);
-  const splitReturn = useTransform(scrollYProgress, [0.45, 0.55], [0, 1]);
-  const patternDrop = useTransform(scrollYProgress, [0.65, 0.75], [0, 1]);
-
-  useEffect(() => {
-    const unsub1 = expenseDrop.on("change", v => setCurrentDisplay(rawBalance - (2860 * v)));
-    const unsub2 = splitReturn.on("change", v => setCurrentDisplay(rawBalance - 2860 + (1080 * v)));
-    const unsub3 = patternDrop.on("change", v => setCurrentDisplay(rawBalance - 2860 + 1080 - (2220 * v)));
-
-    return () => { unsub1(); unsub2(); unsub3(); };
-  }, [expenseDrop, splitReturn, patternDrop]);
 
   const STAGES = [
     { label: "Messy Spending", desc: "Your money leaves clues." },
@@ -106,7 +114,7 @@ export function CombinedStory() {
   ];
 
   return (
-    <section className="bg-surface relative border-y border-outline-variant/20" ref={containerRef}>
+    <section className="bg-surface relative border-y border-outline-variant/20 overflow-x-hidden" ref={containerRef}>
       
       {/* Intro Copy */}
       <div className="pt-32 pb-16 px-6 max-w-4xl mx-auto text-center relative z-20">
@@ -120,7 +128,7 @@ export function CombinedStory() {
       </div>
 
       {/* The Scroll Container Space */}
-      <div className="h-[400vh] relative w-full">
+      <div className="h-[400vh] relative w-full overflow-x-hidden">
         
         {/* Sticky viewport content */}
         <div className="sticky top-0 h-screen w-full flex flex-col items-center justify-center overflow-hidden bg-surface">
@@ -303,8 +311,8 @@ export function CombinedStory() {
                  <motion.div 
                    initial={{ opacity: 0, scale: 0.95 }} 
                    animate={{ opacity: 1, scale: 1 }} 
-                   exit={{ opacity: 0, x: -20 }}
-                   className="absolute inset-0 flex items-center justify-center w-full z-10 px-4"
+                   exit={{ opacity: 0, y: -12 }}
+                   className="absolute inset-0 flex items-center justify-center w-full z-10 px-4 overflow-hidden"
                  >
                    <div className="w-full max-w-2xl bg-surface-container-lowest border border-outline-variant/50 p-6 md:p-10 rounded-[2.5rem] shadow-xl relative overflow-hidden">
                       <div className="absolute top-0 right-0 w-48 h-48 bg-primary/5 blur-[60px]" />

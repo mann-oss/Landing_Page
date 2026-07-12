@@ -69,7 +69,7 @@ export default function BillyGreenLanding({
   };
 
   return (
-    <div className="relative min-h-screen bg-background selection:bg-primary selection:text-on-primary antialiased text-on-background">
+    <div className="relative min-h-screen overflow-x-hidden bg-background selection:bg-primary selection:text-on-primary antialiased text-on-background">
       <AnimatePresence>
         {!peek && (
           <motion.div
