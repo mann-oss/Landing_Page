@@ -187,18 +187,8 @@ export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitL
             pointerEvents: greenLive || isSplit ? 'auto' : 'none',
           }}
         >
-          {/* Faded logo on white green half only (split) — white stays solid */}
-          {!greenLive && (
-            <img
-              src="/billy3.0.png"
-              alt=""
-              aria-hidden
-              className="pointer-events-none absolute inset-0 z-0 m-auto h-[72%] w-[72%] max-w-3xl object-contain object-center opacity-[0.14]"
-            />
-          )}
-
           <div
-            className={`relative z-10 ${greenPeek ? 'pointer-events-none' : 'min-h-screen'}`}
+            className={greenPeek ? 'pointer-events-none' : 'min-h-screen'}
             style={{ width: '100%' }}
           >
             <BillyGreenLanding
