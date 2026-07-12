@@ -61,13 +61,9 @@ body {
   font-family: var(--font-body);
   background-color: #080b11;
   color: #f1f5f9;
-  overflow-x: clip;
+  overflow-x: hidden;
   overflow-y: auto;
   min-height: 100%;
-}
-
-html {
-  overflow-x: clip;
 }
 
 h1, h2, h3, h4, h5, h6 {
