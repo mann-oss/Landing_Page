@@ -17,7 +17,8 @@ import {
   Lock,
   BadgeCheck,
   CheckCircle,
-  HelpCircle
+  HelpCircle,
+  Mail,
 } from 'lucide-react';
 import { motion, AnimatePresence } from 'motion/react';
 
@@ -201,100 +202,188 @@ export function EarlyAccess() {
   const [email, setEmail] = useState('');
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [errorMsg, setErrorMsg] = useState<string | null>(null);
+  const [phase, setPhase] = useState<'idle' | 'sending' | 'sent'>('idle');
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!email || !email.includes('@')) return;
-    
+    if (!email || !email.includes('@') || isSubmitting) return;
+
     setIsSubmitting(true);
-    
-    // Simulate savings registration
-    setTimeout(() => {
-      // Save mail to local storage
-      try {
+    setErrorMsg(null);
+    setPhase('sending');
+
+    try {
+      const { submitEarlyAccessEmail, isSupabaseConfigured } = await import(
+        '../lib/supabase'
+      );
+
+      if (isSupabaseConfigured) {
+        await submitEarlyAccessEmail(email);
+      } else {
+        // Local fallback until Supabase env is set
         const key = 'billy-beta-registrants';
-        const existing = JSON.parse(localStorage.getItem(key) || '[]');
-        if (!existing.includes(email)) {
-          existing.push(email);
+        const existing = JSON.parse(localStorage.getItem(key) || '[]') as string[];
+        const normalized = email.trim().toLowerCase();
+        if (!existing.includes(normalized)) {
+          existing.push(normalized);
           localStorage.setItem(key, JSON.stringify(existing));
         }
-      } catch (err) {
-        console.error("Local storage error:", err);
+        await new Promise((r) => setTimeout(r, 900));
       }
 
-      setIsSubmitting(false);
+      setPhase('sent');
+      await new Promise((r) => setTimeout(r, 650));
       setSuccess(true);
       setEmail('');
-    }, 1200);
+    } catch (err: unknown) {
+      const message =
+        err && typeof err === 'object' && 'message' in err
+          ? String((err as { message: string }).message)
+          : 'Something went wrong. Try again.';
+      // Unique violation
+      if (message.toLowerCase().includes('duplicate') || message.includes('23505')) {
+        setErrorMsg('This email is already on the early access list.');
+      } else {
+        setErrorMsg(message);
+      }
+      setPhase('idle');
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   return (
     <section className="py-24 max-w-7xl mx-auto px-6" id="beta">
       <div className="bg-primary-container rounded-3xl p-12 md:p-24 text-center relative overflow-hidden shadow-xl border border-[#006b0a]/10">
-        
-        {/* Colorful glows */}
         <div className="absolute -top-24 -left-24 w-72 h-72 bg-primary/20 blur-[120px] rounded-full pointer-events-none" />
         <div className="absolute -bottom-24 -right-24 w-72 h-72 bg-tertiary-container/20 blur-[120px] rounded-full pointer-events-none" />
 
         <div className="relative z-10 max-w-2xl mx-auto">
-          
           <h2 className="text-5xl md:text-7xl font-extrabold tracking-tighter mb-8 leading-[0.85] font-headline text-on-primary-container">
-            Take control of your money <span className="italic text-primary">today.</span>
+            Take control of your money{' '}
+            <span className="italic text-primary">today.</span>
           </h2>
-          
+
           <p className="text-lg md:text-xl text-on-primary-container/85 font-semibold mb-12 leading-relaxed">
-            Join 25,000+ forward-thinking individuals who have upgraded their personal financial brains. Zero setup friction, full 90-day sandbox trial inside.
+            Join 25,000+ forward-thinking individuals who have upgraded their
+            personal financial brains. Zero setup friction, full 90-day sandbox
+            trial inside.
           </p>
 
           <AnimatePresence mode="wait">
             {!success ? (
-              <motion.form 
-                key="form"
+              <motion.div
+                key="form-wrap"
                 initial={{ opacity: 1 }}
-                exit={{ opacity: 0, y: -20 }}
-                onSubmit={handleSubmit}
-                className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto"
+                exit={{ opacity: 0, scale: 0.96 }}
+                transition={{ duration: 0.35 }}
               >
-                <input 
-                  required 
-                  type="email" 
-                  value={email}
-                  disabled={isSubmitting}
-                  onChange={(e) => setEmail(e.target.value)}
-                  placeholder="Enter your email address"
-                  className="flex-1 px-6 py-5 rounded-full border-0 bg-white focus:ring-3 focus:ring-primary text-on-surface placeholder-stone-400 font-bold text-sm shadow-sm"
-                />
-                
-                <button 
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="bg-primary text-on-primary px-10 py-5 rounded-full font-black text-sm uppercase tracking-wider hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/35 flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-75"
+                <motion.form
+                  onSubmit={handleSubmit}
+                  className="flex flex-col sm:flex-row gap-4 max-w-lg mx-auto relative"
                 >
-                  {isSubmitting ? (
-                    <span className="w-5 h-5 border-2 border-white border-t-transparent rounded-full animate-spin" />
-                  ) : (
-                    <>Get Early Access <Send size={14} /></>
+                  <input
+                    required
+                    type="email"
+                    value={email}
+                    disabled={isSubmitting}
+                    onChange={(e) => setEmail(e.target.value)}
+                    placeholder="Enter your email address"
+                    className="flex-1 px-6 py-5 rounded-full border-0 bg-white focus:ring-3 focus:ring-primary text-on-surface placeholder-stone-400 font-bold text-sm shadow-sm disabled:opacity-70"
+                  />
+
+                  <button
+                    type="submit"
+                    disabled={isSubmitting}
+                    className="relative overflow-hidden bg-primary text-on-primary px-10 py-5 rounded-full font-black text-sm uppercase tracking-wider hover:scale-105 active:scale-95 transition-all shadow-xl shadow-primary/35 flex items-center justify-center gap-2 cursor-pointer shrink-0 disabled:opacity-80 disabled:hover:scale-100"
+                  >
+                    <AnimatePresence mode="wait">
+                      {phase === 'sending' || phase === 'sent' ? (
+                        <motion.span
+                          key="plane"
+                          className="flex items-center gap-2"
+                          initial={{ opacity: 0, x: -8 }}
+                          animate={
+                            phase === 'sent'
+                              ? { opacity: 0, x: 48, y: -28, rotate: 18 }
+                              : { opacity: 1, x: 0, y: 0, rotate: 0 }
+                          }
+                          exit={{ opacity: 0 }}
+                          transition={{ duration: 0.55, ease: [0.22, 1, 0.36, 1] }}
+                        >
+                          <Send size={16} />
+                          Sending
+                        </motion.span>
+                      ) : (
+                        <motion.span
+                          key="label"
+                          className="flex items-center gap-2"
+                          initial={{ opacity: 0 }}
+                          animate={{ opacity: 1 }}
+                          exit={{ opacity: 0, x: 12 }}
+                        >
+                          Get Early Access <Send size={14} />
+                        </motion.span>
+                      )}
+                    </AnimatePresence>
+                  </button>
+                </motion.form>
+
+                {/* Mail trail while sending */}
+                <AnimatePresence>
+                  {phase === 'sending' && (
+                    <motion.div
+                      className="mt-6 flex justify-center"
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{ opacity: 0 }}
+                    >
+                      <motion.div
+                        className="flex items-center gap-2 text-on-primary-container/70 text-xs font-bold uppercase tracking-widest"
+                        animate={{ opacity: [0.4, 1, 0.4] }}
+                        transition={{ duration: 1.2, repeat: Infinity }}
+                      >
+                        <Mail size={14} />
+                        Delivering to Billy HQ
+                      </motion.div>
+                    </motion.div>
                   )}
-                </button>
-              </motion.form>
+                </AnimatePresence>
+
+                {errorMsg && (
+                  <p className="mt-4 text-sm font-bold text-red-700">{errorMsg}</p>
+                )}
+              </motion.div>
             ) : (
-              <motion.div 
+              <motion.div
                 key="success"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
+                initial={{ opacity: 0, y: 24, scale: 0.94 }}
+                animate={{ opacity: 1, y: 0, scale: 1 }}
+                transition={{ type: 'spring', duration: 0.55, bounce: 0.3 }}
                 className="bg-white/95 rounded-3xl p-8 max-w-md mx-auto shadow-xl border border-primary/20"
               >
-                <div className="bg-primary/10 text-primary w-12 h-12 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <CheckCircle size={24} />
-                </div>
+                <motion.div
+                  initial={{ scale: 0.6, opacity: 0 }}
+                  animate={{ scale: 1, opacity: 1 }}
+                  transition={{ type: 'spring', delay: 0.1, bounce: 0.45 }}
+                  className="bg-primary/10 text-primary w-14 h-14 rounded-full flex items-center justify-center mx-auto mb-4"
+                >
+                  <CheckCircle size={28} />
+                </motion.div>
                 <h4 className="text-xl font-black text-[#005406] mb-2 font-headline">
-                  Successfully Registered!
+                  Mail received!
                 </h4>
                 <p className="text-xs text-stone-600 leading-relaxed font-semibold mb-4">
-                  You are officially on the Billy Priority List! We've reserved your beta seat credentials. Check your inbox shortly for activation.
+                  You are on the Billy Priority List. We saved your email and will
+                  send beta access details to your inbox soon.
                 </p>
-                <button 
-                  onClick={() => setSuccess(false)}
+                <button
+                  type="button"
+                  onClick={() => {
+                    setSuccess(false);
+                    setPhase('idle');
+                  }}
                   className="text-xs font-bold text-primary hover:underline"
                 >
                   Register another email
@@ -303,7 +392,6 @@ export function EarlyAccess() {
             )}
           </AnimatePresence>
 
-          {/* Core security pillars list */}
           <div className="mt-16 flex flex-wrap items-center justify-center gap-x-8 gap-y-3 opacity-70">
             <span className="text-xs font-black uppercase tracking-widest text-[#003e03] flex items-center gap-1.5">
               <Lock size={12} /> Bank-level Security
@@ -315,7 +403,6 @@ export function EarlyAccess() {
               <ClipboardCheck size={12} /> 256-bit Encryption
             </span>
           </div>
-
         </div>
       </div>
     </section>

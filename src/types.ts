@@ -3,6 +3,8 @@
  * SPDX-License-Identifier: Apache-2.0
  */
 
+export type AppFlavor = 'green' | 'blue' | null;
+
 export interface ChatMessage {
   id: string;
   sender: 'user' | 'billy';
@@ -28,8 +30,48 @@ export interface DayMission {
 }
 
 export interface ExternalInputVars {
-  marketTrend: number; // slider -50% to +50%
-  politicalEvent: string; // 'stable' | 'tense' | 'election'
-  inflationValue: number; // 2% to 15%
+  marketTrend: number;
+  politicalEvent: string;
+  inflationValue: number;
   globalIndices: 'bull' | 'bear' | 'flat';
+}
+
+export interface ExpenseItem {
+  id: string;
+  description: string;
+  amount: number;
+  category: string;
+  date: string;
+  paidBy: string;
+}
+
+export interface Friend {
+  id: string;
+  name: string;
+  avatar: string;
+  balance: number;
+}
+
+export interface InvoiceItem {
+  id: string;
+  description: string;
+  quantity: number;
+  rate: number;
+}
+
+export interface Invoice {
+  id: string;
+  clientName: string;
+  clientEmail: string;
+  items: InvoiceItem[];
+  date: string;
+  dueDate: string;
+  status: 'Draft' | 'Sent' | 'Paid' | 'Overdue';
+}
+
+export interface BusinessMetric {
+  month: string;
+  revenue: number;
+  expenses: number;
+  clients: number;
 }
