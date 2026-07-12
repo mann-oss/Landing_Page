@@ -7,8 +7,6 @@ import { useRef, useState } from 'react';
 import { motion } from 'motion/react';
 import {
   Briefcase,
-  TrendingUp,
-  Layers,
   ArrowUpRight,
 } from 'lucide-react';
 import { AppFlavor } from '../types';
@@ -156,7 +154,7 @@ export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitL
           </span>
           <div className="w-[1px] h-3.5 bg-white/10" />
           <span className="text-[10px] font-body font-bold tracking-[0.2em] text-zinc-400 uppercase">
-            Select flavor
+            Select
           </span>
         </div>
       </motion.div>
@@ -280,7 +278,7 @@ export default function SplitLanding({ mode, onModeChange, onOpenPitch }: SplitL
         </span>
         <span className="text-zinc-500/10">•</span>
         <span className={hovered === 'blue' ? 'text-sky-300 font-bold' : ''}>
-          [ II / BLUE / AGENCY SUITE ]
+          [ II / BLU / AGENCY SUITE ]
         </span>
       </motion.div>
     </div>
@@ -300,6 +298,13 @@ function BlueSplitPreview({
       animate={{ opacity: hidden ? 0 : 1 }}
       transition={{ duration: 0.35, ease: WIPE_EASE }}
     >
+      <img
+        src="/bblu3.0.png"
+        alt=""
+        aria-hidden
+        className="pointer-events-none absolute inset-0 h-full w-full object-cover object-center opacity-[0.22] scale-110"
+      />
+      <div className="absolute inset-0 bg-[#050a12]/70" />
       <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(56,189,248,0.015)_1px,transparent_1px),linear-gradient(to_bottom,rgba(56,189,248,0.015)_1px,transparent_1px)] bg-[size:3.5rem_3.5rem]" />
       <div className="absolute top-[-10%] right-[-10%] w-[60%] h-[60%] rounded-full bg-sky-950/30 blur-[130px] pointer-events-none" />
 
@@ -312,7 +317,7 @@ function BlueSplitPreview({
         </div>
 
         <h2 className="text-4xl md:text-6xl font-headline font-black tracking-tight text-white mb-5">
-          Billy <span className="italic font-normal text-sky-400">Blue</span>
+          Billy <span className="italic font-normal text-sky-400">Blu</span>
         </h2>
 
         <p className="text-sm text-sky-100/60 leading-relaxed mb-6 max-w-sm font-body">
@@ -320,33 +325,11 @@ function BlueSplitPreview({
           modern consultancies.
         </p>
 
-        <div className="space-y-3 w-full mb-7">
-          <div className="flex items-center gap-3 bg-slate-900/50 border border-sky-900/30 p-4 rounded-2xl justify-end">
-            <div className="text-right">
-              <h4 className="text-xs font-semibold text-white">
-                Digital Invoicing Desk
-              </h4>
-              <p className="text-[11px] text-sky-400/60 mt-0.5">
-                Generate elegant printable records
-              </p>
-            </div>
-            <div className="p-2 bg-sky-950/60 rounded-xl border border-sky-800/30 text-sky-400">
-              <Layers className="w-4 h-4" />
-            </div>
-          </div>
-          <div className="flex items-center gap-3 bg-slate-900/50 border border-sky-900/30 p-4 rounded-2xl justify-end">
-            <div className="text-right">
-              <h4 className="text-xs font-semibold text-white">
-                Cashflow Projection
-              </h4>
-              <p className="text-[11px] text-sky-400/60 mt-0.5">
-                Vector layouts for agency growth
-              </p>
-            </div>
-            <div className="p-2 bg-sky-950/60 rounded-xl border border-sky-800/30 text-sky-400">
-              <TrendingUp className="w-4 h-4" />
-            </div>
-          </div>
+        <div className="mb-7 inline-flex items-center gap-2 rounded-full border border-sky-400/20 bg-sky-500/10 px-4 py-2">
+          <span className="h-1.5 w-1.5 rounded-full bg-sky-400 animate-pulse" />
+          <span className="font-mono text-[10px] font-bold uppercase tracking-[0.2em] text-sky-200">
+            Coming soon
+          </span>
         </div>
 
         <div className="pointer-events-auto">
@@ -358,7 +341,7 @@ function BlueSplitPreview({
             }}
             className="group flex items-center gap-2 bg-sky-500 hover:bg-sky-400 text-sky-950 font-bold text-xs px-6 py-3.5 rounded-xl cursor-pointer"
           >
-            Enter Billy Blue
+            Open Billy Blu
             <ArrowUpRight className="w-3.5 h-3.5 group-hover:-translate-y-0.5 group-hover:translate-x-0.5 transition-transform" />
           </button>
         </div>

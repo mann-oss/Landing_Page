@@ -32,7 +32,7 @@ export default function Header({ onBack }: HeaderProps) {
               className="flex items-center gap-1.5 text-xs font-bold text-on-surface-variant hover:text-primary transition-colors"
             >
               <ArrowLeft size={16} />
-              <span className="hidden sm:inline">Flavors</span>
+              <span className="hidden sm:inline">Back</span>
             </button>
           )}
 
