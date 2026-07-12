@@ -26,15 +26,27 @@ export async function submitEarlyAccessEmail(email: string) {
     throw new Error('Supabase is not configured');
   }
 
-  const { data, error } = await supabase
-    .from('early_access')
-    .insert({
-      email: email.trim().toLowerCase(),
-      source: 'billy-green-landing',
-    })
-    .select()
-    .single();
+  const payload = {
+    email: email.trim().toLowerCase(),
+    source: 'billy-green-landing',
+  };
 
-  if (error) throw error;
-  return data as EarlyAccessRow;
+  // Insert only — avoid needing SELECT RLS for the round-trip
+  const { error } = await supabase.from('early_access').insert(payload);
+
+  if (error) {
+    // Unique violation
+    if (error.code === '23505') {
+      throw new Error('This email is already on the early access list.');
+    }
+    // RLS / grants misconfigured
+    if (error.code === '42501') {
+      throw new Error(
+        'Database blocked the signup (RLS). Re-run supabase/early_access.sql in the Supabase SQL Editor.',
+      );
+    }
+    throw new Error(error.message);
+  }
+
+  return payload as EarlyAccessRow;
 }

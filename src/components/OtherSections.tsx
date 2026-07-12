@@ -218,19 +218,13 @@ export function EarlyAccess() {
         '../lib/supabase'
       );
 
-      if (isSupabaseConfigured) {
-        await submitEarlyAccessEmail(email);
-      } else {
-        // Local fallback until Supabase env is set
-        const key = 'billy-beta-registrants';
-        const existing = JSON.parse(localStorage.getItem(key) || '[]') as string[];
-        const normalized = email.trim().toLowerCase();
-        if (!existing.includes(normalized)) {
-          existing.push(normalized);
-          localStorage.setItem(key, JSON.stringify(existing));
-        }
-        await new Promise((r) => setTimeout(r, 900));
+      if (!isSupabaseConfigured) {
+        throw new Error(
+          'Supabase env missing. Add VITE_SUPABASE_URL and VITE_SUPABASE_ANON_KEY to .env',
+        );
       }
+
+      await submitEarlyAccessEmail(email);
 
       setPhase('sent');
       await new Promise((r) => setTimeout(r, 650));

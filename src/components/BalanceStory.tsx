@@ -2,6 +2,60 @@ import React, { useRef, useState, useEffect } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'motion/react';
 import { ScanLine, Users, Activity, Receipt, MapPin, Utensils, Zap, AlertTriangle, ArrowRight, CheckCircle } from 'lucide-react';
 
+type TickerItem = {
+  label: string;
+  tone: 'neutral' | 'debit' | 'credit' | 'warn' | 'sub';
+  icon?: 'receipt' | 'food' | 'pin';
+};
+
+const MESSY_TICKER_A: TickerItem[] = [
+  { label: '-₹780 UPI', tone: 'debit' },
+  { label: 'Weekend Food · -₹1,450', tone: 'debit', icon: 'food' },
+  { label: 'Spotify Premium', tone: 'warn' },
+  { label: 'Shared Cab', tone: 'neutral', icon: 'pin' },
+  { label: 'Netflix Renewed · -₹649', tone: 'sub' },
+];
+
+const MESSY_TICKER_B: TickerItem[] = [
+  { label: 'Grocery Store', tone: 'neutral', icon: 'receipt' },
+  { label: 'Salary Credited +₹82k', tone: 'credit' },
+  { label: '-₹320 Zomato', tone: 'debit' },
+  { label: 'Current Calculation', tone: 'neutral' },
+  { label: 'Unorganized Events', tone: 'warn' },
+];
+
+const MESSY_TICKER_C: TickerItem[] = [
+  { label: '-₹1,450 Weekend Food', tone: 'debit', icon: 'food' },
+  { label: 'Shared Cab', tone: 'neutral', icon: 'pin' },
+  { label: '-₹780 UPI', tone: 'debit' },
+  { label: 'Netflix Renewed · -₹649', tone: 'sub' },
+  { label: 'Salary Credited +₹82k', tone: 'credit' },
+];
+
+function TickerChip({ item }: { item: TickerItem }) {
+  const toneClass =
+    item.tone === 'debit'
+      ? 'bg-error/10 text-error border-error/20'
+      : item.tone === 'credit'
+        ? 'bg-emerald-500/10 text-emerald-600 border-emerald-500/20'
+        : item.tone === 'warn'
+          ? 'bg-amber-500/10 text-amber-600 border-amber-500/20'
+          : item.tone === 'sub'
+            ? 'bg-blue-500/10 text-blue-600 border-blue-500/20'
+            : 'bg-surface-container text-on-surface border-outline-variant/30';
+
+  return (
+    <div
+      className={`shrink-0 inline-flex items-center gap-2 px-4 py-2.5 rounded-xl border shadow-sm font-mono font-bold text-xs md:text-sm whitespace-nowrap ${toneClass}`}
+    >
+      {item.icon === 'receipt' && <Receipt size={14} className="opacity-70" />}
+      {item.icon === 'food' && <Utensils size={14} className="opacity-70" />}
+      {item.icon === 'pin' && <MapPin size={14} className="opacity-70" />}
+      {item.label}
+    </div>
+  );
+}
+
 export function CombinedStory() {
   const containerRef = useRef<HTMLDivElement>(null);
   
@@ -87,62 +141,49 @@ export function CombinedStory() {
           {/* Visual Interaction Arena */}
           <div className="relative w-full max-w-5xl aspect-[4/5] md:aspect-[21/9] flex items-center justify-center -mt-10 md:mt-12 px-4 md:px-6 z-10 pointer-events-none">
              
-             {/* STAGE 0 */}
+             {/* STAGE 0 — chaotic spend as horizontal tickers (not floating upward) */}
              <AnimatePresence>
                {activeStage === 0 && (
                  <motion.div 
                    initial={{ opacity: 0 }} 
                    animate={{ opacity: 1 }} 
-                   exit={{ opacity: 0, scale: 1.1, filter: "blur(4px)" }}
-                   className="absolute inset-0 flex items-center justify-center"
+                   exit={{ opacity: 0, filter: "blur(4px)" }}
+                   transition={{ duration: 0.4 }}
+                   className="absolute inset-0 flex flex-col items-center justify-center gap-4 overflow-hidden"
                  >
-                   {/* Elements floating cluster */}
-                   <motion.div animate={{ y: [0, -10, 0], rotate: [0, -5, 0] }} transition={{ repeat: Infinity, duration: 4 }} className="absolute left-[5%] md:left-[10%] top-[15%] bg-surface-container p-4 rounded-xl shadow-lg border border-outline-variant/30 transform -rotate-12 z-10">
-                     <Receipt className="text-on-surface-variant mb-2" />
-                     <div className="w-20 h-2 bg-on-surface-variant/20 rounded mb-1" />
-                     <div className="w-12 h-2 bg-on-surface-variant/20 rounded" />
-                   </motion.div>
-                   
-                   <motion.div animate={{ y: [0, 15, 0], x: [0, -5, 0], rotate: [0, 5, 0] }} transition={{ repeat: Infinity, duration: 5 }} className="absolute right-[5%] md:right-[15%] top-[10%] bg-error/10 text-error px-4 py-2 rounded-xl border border-error/20 shadow-md font-mono font-bold text-sm transform rotate-6 z-20">
-                     -₹780 UPI
-                   </motion.div>
+                   <p className="text-on-surface-variant font-bold uppercase tracking-widest text-sm text-center mb-2 z-20">
+                     Unorganized Events
+                   </p>
 
-                   <motion.div animate={{ y: [0, 5, 0], rotate: [0, -10, 0] }} transition={{ repeat: Infinity, duration: 3.5 }} className="absolute left-[20%] md:left-[30%] top-[5%] bg-surface-container-high p-3 rounded-xl border border-outline-variant/30 shadow-lg flex items-center gap-2 transform rotate-12 z-0">
-                     <Utensils size={16} className="text-error" />
-                     <span className="text-xs font-bold text-on-surface text-center">Weekend Food<br/><span className="text-error">-₹1,450</span></span>
-                   </motion.div>
+                   <div className="w-full overflow-hidden mask-fade-x">
+                     <div className="animate-marquee-rtl flex w-max gap-3 py-1">
+                       {[...MESSY_TICKER_A, ...MESSY_TICKER_A].map((item, i) => (
+                         <div key={`a-${i}`}>
+                           <TickerChip item={item} />
+                         </div>
+                       ))}
+                     </div>
+                   </div>
 
-                   <motion.div animate={{ y: [0, -15, 0], x: [0, 10, 0], rotate: [0, 8, 0] }} transition={{ repeat: Infinity, duration: 6 }} className="absolute right-[25%] md:right-[35%] top-[25%] bg-amber-500/10 text-amber-600 px-4 py-2 rounded-xl border border-amber-500/20 shadow-md font-mono font-bold text-xs transform -rotate-6 z-10">
-                     Spotify Premium
-                   </motion.div>
-                   
-                   <motion.div animate={{ y: [0, -8, 0], rotate: [0, -2, 0] }} transition={{ repeat: Infinity, duration: 3 }} className="absolute right-[5%] md:right-[20%] bottom-[30%] bg-surface-container-high p-3 rounded-xl border border-outline-variant/30 shadow-lg flex items-center gap-2 z-20">
-                     <MapPin size={16} className="text-amber-500" />
-                     <span className="text-xs font-bold text-on-surface">Shared Cab</span>
-                   </motion.div>
-                   
-                   <motion.div animate={{ y: [0, 10, 0], rotate: [0, 3, 0] }} transition={{ repeat: Infinity, duration: 4.5 }} className="absolute left-[10%] md:left-[20%] bottom-[25%] bg-blue-500/10 text-blue-600 px-4 py-3 rounded-xl border border-blue-500/20 shadow font-mono font-bold text-sm transform -rotate-3 z-30 flex flex-col gap-1">
-                     <span>Netflix Renewed</span>
-                     <span className="text-xs text-blue-500">-₹649</span>
-                   </motion.div>
+                   <div className="w-full overflow-hidden mask-fade-x">
+                     <div className="animate-marquee-ltr flex w-max gap-3 py-1">
+                       {[...MESSY_TICKER_B, ...MESSY_TICKER_B].map((item, i) => (
+                         <div key={`b-${i}`}>
+                           <TickerChip item={item} />
+                         </div>
+                       ))}
+                     </div>
+                   </div>
 
-                   <motion.div animate={{ y: [0, -12, 0], x: [0, 5, 0], rotate: [0, -15, 0] }} transition={{ repeat: Infinity, duration: 5.5 }} className="absolute left-[35%] md:left-[45%] bottom-[10%] bg-surface-container-highest p-4 rounded-xl shadow-xl border border-outline-variant/40 transform rotate-12 z-20">
-                     <Receipt className="text-on-surface-variant mb-2" size={20} />
-                     <span className="text-[10px] font-bold text-on-surface uppercase block mb-1">Grocery Store</span>
-                     <div className="w-16 h-1.5 bg-on-surface-variant/30 rounded mb-1" />
-                     <div className="w-24 h-1.5 bg-on-surface-variant/30 rounded mb-1" />
-                     <div className="w-10 h-1.5 bg-on-surface-variant/30 rounded" />
-                   </motion.div>
-
-                   <motion.div animate={{ scale: [1, 1.05, 1], rotate: [0, 2, 0] }} transition={{ repeat: Infinity, duration: 2.5 }} className="absolute right-[25%] md:right-[40%] bottom-[15%] bg-emerald-500/10 text-emerald-600 px-3 py-1.5 rounded-lg border border-emerald-500/20 shadow-sm font-mono font-bold text-[10px] transform rotate-6 z-0">
-                     Salary Credited +₹82k
-                   </motion.div>
-                   
-                   <motion.div animate={{ y: [0, 10, 0], rotate: [0, -4, 0] }} transition={{ repeat: Infinity, duration: 4.2 }} className="absolute right-[15%] md:right-[25%] bottom-[5%] bg-error/10 text-error px-4 py-2 rounded-xl border border-error/20 shadow-md font-mono font-bold text-sm transform -rotate-12 z-20">
-                     -₹320 Zomato
-                   </motion.div>
-                   
-                   <p className="text-on-surface-variant font-bold uppercase tracking-widest text-sm text-center">Unorganized Events</p>
+                   <div className="w-full overflow-hidden mask-fade-x">
+                     <div className="animate-marquee-rtl-slow flex w-max gap-3 py-1">
+                       {[...MESSY_TICKER_C, ...MESSY_TICKER_C].map((item, i) => (
+                         <div key={`c-${i}`}>
+                           <TickerChip item={item} />
+                         </div>
+                       ))}
+                     </div>
+                   </div>
                  </motion.div>
                )}
              </AnimatePresence>

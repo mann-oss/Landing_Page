@@ -1,5 +1,4 @@
--- Early access waitlist for Billy Green landing page.
--- Run in Supabase SQL Editor:
+-- FIX: allow landing-page inserts (run this in SQL Editor)
 -- https://supabase.com/dashboard/project/wpzopkigbbldcfpxuvcm/sql/new
 
 create extension if not exists "pgcrypto";
@@ -12,20 +11,26 @@ create table if not exists public.early_access (
   constraint early_access_email_unique unique (email)
 );
 
+-- Grants (required for publishable / anon key)
+grant usage on schema public to anon, authenticated, service_role;
+grant insert, select on table public.early_access to anon, authenticated, service_role;
+
 alter table public.early_access enable row level security;
 
--- Drop old policies if re-running
 drop policy if exists "Anyone can join early access" on public.early_access;
 drop policy if exists "anon insert early access" on public.early_access;
 drop policy if exists "public insert early access" on public.early_access;
+drop policy if exists "allow_anon_insert" on public.early_access;
+drop policy if exists "allow_anon_select" on public.early_access;
 
--- Allow inserts from publishable / anon client keys
-create policy "public insert early access"
+-- Permissive insert for browser clients (no role filter)
+create policy "allow_anon_insert"
   on public.early_access
   for insert
-  to public
   with check (true);
 
-grant usage on schema public to anon, authenticated, service_role;
-grant insert on table public.early_access to anon, authenticated, service_role;
-grant select on table public.early_access to service_role;
+-- Needed because the app reads the row back after insert
+create policy "allow_anon_select"
+  on public.early_access
+  for select
+  using (true);
